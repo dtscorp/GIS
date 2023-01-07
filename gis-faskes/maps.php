@@ -16,7 +16,7 @@
                           <span class="page-title-icon bg-gradient-primary text-white me-2">
                               <i class="mdi mdi-home"></i>
                           </span>
-                          Faskes Vaksinasi testing
+                          Faskes Vaksinasi testing 123
                       </h3>
                       <nav aria-label="breadcrumb">
                           <ul class="breadcrumb">
