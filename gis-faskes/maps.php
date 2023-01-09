@@ -67,7 +67,8 @@
       include ('./partials/_footer.php');
       ?>
       <script>
-        const batchTrack = document.getElementById("province");
+        const id_province = document.getElementById("province");
+        const id_city = document.getElementById("city");
         var map = L.map('map').setView([51.505, -0.09], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -84,16 +85,39 @@ const getProvince = async () => {
     return result.results
 
 }
-const displayOption = async () => {
+const provinceOption = async () => {
   const options = await getProvince();
-  console.log(options);
   for (option of options) {
     const newOption = document.createElement("option");
     newOption.value = option.key;
     newOption.text = option.value;
-    batchTrack.appendChild(newOption);
+    id_province.appendChild(newOption);
   }
 };
-displayOption();
+
+provinceOption();
+
+const getCity = async () => {
+    // const province = await provinceOption();
+    const url = `https://kipi.covid19.go.id/api/get-city?start_id=ACEH`;
+    const config = {
+        method: 'POST',
+    }
+    const response = await fetch(url, config);
+    const result = await response.json();
+
+    return result.results
+}
+const cityOption = async () => {
+  const options = await getCity();
+  for (option of options) {
+    const newOption = document.createElement("option");
+    newOption.value = option.key;
+    newOption.text = option.value;
+    id_city.appendChild(newOption);
+  }
+};
+
+cityOption();
       </script>
       <!-- partial -->
