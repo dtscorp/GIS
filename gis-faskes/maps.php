@@ -38,12 +38,13 @@
                                       </div>
 
                                       <div class="form-group">
-                                          <select id="city" class="form-select" aria-label="Default select example">
+                                          <select id="city" class="form-select" aria-label="Default select example"
+                                              disabled="true">
                                               <option selected>Pilih Kota</option>
                                           </select>
                                       </div>
-                                      <button type="submit" onclick="searchVaccinationFacility(event)"
-                                          class="btn btn-primary">Cari Faskes Vaksinasi</button>
+                                      <button id="btnSearch" type="submit" onclick="searchVaccinationFacility(event)"
+                                          class="btn btn-primary" disabled="true">Cari Faskes Vaksinasi</button>
                                   </form>
                               </div>
                           </div>
@@ -53,7 +54,7 @@
                       <div class="col-12 grid-margin stretch-card">
                           <div class="card">
                               <div class="card-body">
-                                  <div id="map" style="height: 300px;"></div>
+                                  <div id="map" style="height: 400px;"></div>
                               </div>
                           </div>
                       </div>
@@ -70,6 +71,7 @@
       <script>
 const cityDropdown = document.getElementById("city");
 const provinceDropdown = document.getElementById("province");
+const btnSearch = document.getElementById("btnSearch");
 
 let map = L.map('map');
 
@@ -81,6 +83,8 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
+
+
 
 const getProvince = async () => {
     const url = 'https://kipi.covid19.go.id/api/get-province';
@@ -130,6 +134,8 @@ const cityOption = async (provinceKey) => {
 
 const handleOnchangeProvince = (event) => {
     const provinceKey = event.target.value;
+    cityDropdown.disabled = false;
+    btnSearch.disabled = false;
     cityOption(provinceKey);
 }
 
@@ -148,15 +154,43 @@ const searchVaccinationFacility = async (event) => {
         }
 
         const response = await fetch(url, config)
-        const result = await response.json();
+        const results = await response.json();
+        const coords = [];
 
-        let marker = L.marker([result.data[0].latitude, result.data[0].longitude]).addTo(map);
-        map.setView([result.data[0].latitude, result.data[0].longitude], 13);
+        map.setView([results.data[0].latitude, results.data[0].longitude], 10);
 
-        console.log(result)
+        results.data.forEach(((data, idx) => {
+            if (idx <= 4) {
+                let marker = L.marker([data.latitude, data.longitude]).addTo(map);
+                const popupContent =
+                    `<b>${data.jenis_faskes} ${data.nama}</b><br>${data.alamat} | ${data.telp}<br><br><b>${data.status}</b>`
+                marker.bindPopup(
+                    popupContent
+                ).openPopup();
+
+                coords.push([Number(data.latitude), Number(data.longitude)])
+            }
+        }))
+
+
+        navigator.geolocation.getCurrentPosition(position => {
+            const closerLocation = L.GeometryUtil.closest(map, coords, [position.coords.latitude,
+                position.coords.longitude
+            ])
+
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(position.coords.latitude, position.coords
+                        .longitude),
+                    L.latLng(closerLocation.lat, closerLocation.lng)
+                ],
+            }).addTo(map);
+
+            console.log(closerLocation.distance / 1000)
+        })
+
     } catch (err) {
         console.log(err)
     }
 }
       </script>
-      <!-- partial -->
