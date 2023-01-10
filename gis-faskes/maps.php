@@ -31,20 +31,19 @@
                               <div class="card-body">
                                   <form>
                                       <div class="form-group">
-                                          <label for=""></label>
-                                          <select id="province" class="form-select" aria-label="Default select example">
+                                          <select id="province" class="form-select" aria-label="Default select example"
+                                              onchange="handleOnchangeProvince(event)">
                                               <option selected>Pilih Provinsi</option>
                                           </select>
                                       </div>
 
                                       <div class="form-group">
-                                          <label for=""></label>
                                           <select id="city" class="form-select" aria-label="Default select example">
                                               <option selected>Pilih Kota</option>
                                           </select>
                                       </div>
-                                      <button type="submit" class="btn btn-primary">Cari <i
-                                              class="mdi mdi-map-marker-plus"></i></button>
+                                      <button type="submit" onclick="searchVaccinationFacility(event)"
+                                          class="btn btn-primary">Cari Faskes Vaksinasi</button>
                                   </form>
                               </div>
                           </div>
@@ -67,10 +66,17 @@
       <?php 
       include ('./partials/_footer.php');
       ?>
+
       <script>
-const id_province = document.getElementById("province");
-const id_city = document.getElementById("city");
-var map = L.map('map').setView([51.505, -0.09], 13);
+const cityDropdown = document.getElementById("city");
+const provinceDropdown = document.getElementById("province");
+
+let map = L.map('map');
+
+navigator.geolocation.getCurrentPosition(position => {
+    map.setView([position.coords.latitude, position.coords.longitude], 13);
+})
+
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -83,24 +89,25 @@ const getProvince = async () => {
     }
     const response = await fetch(url, config);
     const result = await response.json();
+
     return result.results
 
 }
 const provinceOption = async () => {
-    const options = await getProvince();
-    for (option of options) {
+    const provinces = await getProvince();
+
+    for (province of provinces) {
         const newOption = document.createElement("option");
-        newOption.value = option.key;
-        newOption.text = option.value;
-        id_province.appendChild(newOption);
+        newOption.value = province.key;
+        newOption.text = province.value;
+        provinceDropdown.appendChild(newOption);
     }
 };
 
 provinceOption();
 
-const getCity = async () => {
-    // const province = await provinceOption();
-    const url = `https://kipi.covid19.go.id/api/get-city?start_id=ACEH`;
+const getCity = async (provinceKey) => {
+    const url = `https://kipi.covid19.go.id/api/get-city?start_id=${provinceKey}`;
     const config = {
         method: 'POST',
     }
@@ -109,16 +116,47 @@ const getCity = async () => {
 
     return result.results
 }
-const cityOption = async () => {
-    const options = await getCity();
-    for (option of options) {
-        const newOption = document.createElement("option");
-        newOption.value = option.key;
-        newOption.text = option.value;
-        id_city.appendChild(newOption);
+
+const cityOption = async (provinceKey) => {
+    const cities = await getCity(provinceKey);
+    let newOption = ``;
+
+    for (city of cities) {
+        newOption += `<option value="${city.key}">${city.value}</option>`;
+
+        cityDropdown.innerHTML = newOption;
     }
 };
 
-cityOption();
+const handleOnchangeProvince = (event) => {
+    const provinceKey = event.target.value;
+    cityOption(provinceKey);
+}
+
+const searchVaccinationFacility = async (event) => {
+    event.preventDefault();
+
+    try {
+        const url = "https://kipi.covid19.go.id/api/get-faskes-vaksinasi?" + new URLSearchParams({
+            skip: 0,
+            province: provinceDropdown.value,
+            city: cityDropdown.value
+        });
+
+        const config = {
+            method: "GET"
+        }
+
+        const response = await fetch(url, config)
+        const result = await response.json();
+
+        let marker = L.marker([result.data[0].latitude, result.data[0].longitude]).addTo(map);
+        map.setView([result.data[0].latitude, result.data[0].longitude], 13);
+
+        console.log(result)
+    } catch (err) {
+        console.log(err)
+    }
+}
       </script>
       <!-- partial -->
