@@ -24,7 +24,7 @@
                   <div class="row">
                       <div class="col-12 grid-margin stretch-card">
                           <div class="card">
-                              <div class="card-body">
+                              <div class="card-body d-flex flex-column">
                                   <form>
                                       <div class="form-group">
                                           <select id="province" class="form-select" aria-label="Default select example"
@@ -49,6 +49,11 @@
                                           Lihat Rute
                                       </button>
                                   </form>
+                                  <span class="mt-4" style="font-size: 0.75rem; color: #ff456b">Note: Reset terlebih
+                                      dahulu
+                                      jika ingin
+                                      mengubah
+                                      kota</span>
                               </div>
                           </div>
                       </div>
