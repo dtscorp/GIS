@@ -46,7 +46,6 @@
                           <th> Name </th>
                           <th> NIM </th>
                           <th> Contribution </th>
-                          <th> Deadline </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -57,11 +56,6 @@
                           <td> Abdulloh Fahmi </td>
                           <td>0110220071</td>
                           <td>Handle search faskes features</td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
                         </tr>
                         <tr>
                           <td class="py-1">
@@ -70,11 +64,6 @@
                           <td> Danang Tri Saputro </td>
                           <td>0110220057</td>
                           <td>Handle templating the  program</td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 80%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
                         </tr>
                         <tr>
                           <td class="py-1">
@@ -83,11 +72,6 @@
                           <td> Seli Mulyani </td>
                           <td>0110220020</td>
                           <td>handle report document</td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
                         </tr>
                         <tr>
                           <td class="py-1">
@@ -96,11 +80,6 @@
                           <td> Wahyu Adi Pramudya </td>
                           <td>0110220025</td>
                           <td>Handle developing program</td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
                         </tr>
                         <tr>
                           <td class="py-1">
@@ -109,11 +88,6 @@
                           <td> Roni Prawijaya </td>
                           <td>0110220198</td>
                           <td>Handle developing program</td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
                         </tr>
                       </tbody>
                     </table>
