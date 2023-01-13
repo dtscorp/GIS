@@ -26,7 +26,7 @@
                       <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">About Program</h4>
-                    <p class="card-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum</p>
+                    <p class="card-description">Program ini merupakan salah satu contoh dari penerapan SIG (Sistem Informasih geografis), memanfaatkan data dari <a href="https://covid19.go.id/dokumentasi-api-faskes-vaksinasi">dokumentasi faskes</a> yang disediakan pemerintah yang berisi beberapa data fasilitas kesehatan yang  mengadakan vaksinasi covid-19 dengan beberapa golongan sesuai ketersediaan. tujuan dari program ini dibuat adalah untuk mempermudah masyarakat mencari fasilitas kesehatan yang menyediakan vaksinasi covid-19</p>
                   </div>
                 </div>
                       </div>
