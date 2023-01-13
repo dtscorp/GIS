@@ -8,7 +8,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="./maps.php">
-                <span class="menu-title">Faskes</span>
+                <span class="menu-title">Faskes Vaksinasi</span>
                 <i class="mdi mdi-hospital menu-icon"></i>
             </a>
         </li>
