@@ -8,8 +8,14 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="./maps.php">
-                <span class="menu-title">Peta</span>
-                <i class="mdi mdi-book menu-icon"></i>
+                <span class="menu-title">Faskes</span>
+                <i class="mdi mdi-hospital menu-icon"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="./about.php">
+                <span class="menu-title">About</span>
+                <i class="mdi mdi-information menu-icon"></i>
             </a>
         </li>
     </ul>

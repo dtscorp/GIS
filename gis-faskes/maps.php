@@ -1,22 +1,18 @@
-      <!-- partial:partials/_navbar.html -->
       <?php 
       include ('./partials/_navbar.php');
       ?>
-      <!-- partial -->
       <div class="container-fluid page-body-wrapper">
-          <!-- partial:partials/_sidebar.html -->
           <?php 
       include ('./partials/_sidebar.php');
       ?>
-          <!-- partial -->
           <div class="main-panel">
               <div class="content-wrapper">
                   <div class="page-header">
                       <h3 class="page-title">
                           <span class="page-title-icon bg-gradient-primary text-white me-2">
-                              <i class="mdi mdi-home"></i>
+                              <i class="mdi mdi-hospital"></i>
                           </span>
-                          Faskes Vaksinasi Yang Tersedia
+                          Faskes Vaksinasi
                       </h3>
                       <nav aria-label="breadcrumb">
                           <ul class="breadcrumb">
@@ -43,8 +39,15 @@
                                               <option selected>Pilih Kota</option>
                                           </select>
                                       </div>
-                                      <button id="btnSearch" type="submit" onclick="searchVaccinationFacility(event)"
+                                      <button id="btnSearch" type="button" onclick="searchVaccinationFacility(event)"
                                           class="btn btn-primary" disabled="true">Cari Faskes Vaksinasi</button>
+                                      <button id="btnReset" type="button" onclick="resetMarker(event)"
+                                          class="btn btn-danger" disabled="true">Reset</button>
+                                      <button id="btnAddRoute" type="button" onclick="addWaypointRoute(event)"
+                                          class="btn btn-info float-end" disabled="true">
+                                          <i class="mdi mdi-routes"></i>
+                                          Lihat Rute
+                                      </button>
                                   </form>
                               </div>
                           </div>
@@ -62,8 +65,7 @@
               </div>
           </div>
       </div>
-      <!-- content-wrapper ends -->
-      <!-- partial:partials/_footer.html -->
+
       <?php 
       include ('./partials/_footer.php');
       ?>
@@ -72,8 +74,15 @@
 const cityDropdown = document.getElementById("city");
 const provinceDropdown = document.getElementById("province");
 const btnSearch = document.getElementById("btnSearch");
+const btnReset = document.getElementById("btnReset");
+const btnAddRoute = document.getElementById("btnAddRoute");
 
 let map = L.map('map');
+const markers = [];
+let coords = [];
+let waypoints;
+let popupCurrentLoc;
+let popupFaskesLoc;
 
 navigator.geolocation.getCurrentPosition(position => {
     map.setView([position.coords.latitude, position.coords.longitude], 13);
@@ -83,7 +92,6 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
-
 
 
 const getProvince = async () => {
@@ -141,6 +149,8 @@ const handleOnchangeProvince = (event) => {
 
 const searchVaccinationFacility = async (event) => {
     event.preventDefault();
+    btnReset.disabled = false;
+    btnAddRoute.disabled = false;
 
     try {
         const url = "https://kipi.covid19.go.id/api/get-faskes-vaksinasi?" + new URLSearchParams({
@@ -155,42 +165,84 @@ const searchVaccinationFacility = async (event) => {
 
         const response = await fetch(url, config)
         const results = await response.json();
-        const coords = [];
 
-        map.setView([results.data[0].latitude, results.data[0].longitude], 10);
-
-        results.data.forEach(((data, idx) => {
-            if (idx <= 4) {
-                let marker = L.marker([data.latitude, data.longitude]).addTo(map);
-                const popupContent =
-                    `<b>${data.jenis_faskes} ${data.nama}</b><br>${data.alamat} | ${data.telp}<br><br><b>${data.status}</b>`
-                marker.bindPopup(
-                    popupContent
-                ).openPopup();
-
-                coords.push([Number(data.latitude), Number(data.longitude)])
-            }
-        }))
-
-
-        navigator.geolocation.getCurrentPosition(position => {
-            const closerLocation = L.GeometryUtil.closest(map, coords, [position.coords.latitude,
-                position.coords.longitude
-            ])
-
-            L.Routing.control({
-                waypoints: [
-                    L.latLng(position.coords.latitude, position.coords
-                        .longitude),
-                    L.latLng(closerLocation.lat, closerLocation.lng)
-                ],
-            }).addTo(map);
-
-            console.log(closerLocation.distance / 1000)
-        })
+        addFaskesPinpoints(results)
 
     } catch (err) {
         console.log(err)
     }
+}
+
+const addFaskesPinpoints = (results) => {
+    map.setView([results.data[0].latitude, results.data[0].longitude], 10);
+
+    results.data.forEach(((data, idx) => {
+        if (idx <= 4) {
+            let marker = L.marker([data.latitude, data.longitude]);
+            const popupContent =
+                `<b>${data.jenis_faskes} ${data.nama}</b><br>${data.alamat} | ${data.telp}<br><br><b>${data.status}</b>`
+            marker.bindPopup(
+                popupContent
+            )
+            markers.push(marker);
+            map.addLayer(marker);
+
+            coords.push([Number(data.latitude), Number(data.longitude)])
+        }
+    }))
+}
+
+const addWaypointRoute = () => {
+    navigator.geolocation.getCurrentPosition(position => {
+        const closerLocation = L.GeometryUtil.closest(map, coords, [position.coords.latitude,
+            position.coords.longitude
+        ])
+
+        waypoints = L.Routing.control({
+            waypoints: [
+                L.latLng(position.coords.latitude,
+                    position.coords.longitude),
+                L.latLng(closerLocation.lat, closerLocation.lng)
+            ],
+        }).addTo(map)
+
+        popupCurrentLoc = L.popup({
+                autoClose: false
+            })
+            .setContent('Lokasi Anda')
+            .setLatLng([position.coords.latitude,
+                position.coords.longitude
+            ]).openOn(map);
+
+        popupFaskesLoc = L.popup({
+                autoClose: false
+            })
+            .setContent('Lokasi Faskes')
+            .setLatLng([closerLocation.lat,
+                closerLocation.lng
+            ]).openOn(map);
+
+    })
+
+}
+
+const resetMarker = (event) => {
+    btnAddRoute.disabled = true;
+    event.preventDefault();
+
+    coords = [];
+
+    if (waypoints) {
+        map.removeControl(waypoints);
+    }
+
+    map.removeLayer(popupCurrentLoc);
+    map.removeLayer(popupFaskesLoc);
+
+    markers.forEach(marker => {
+        map.removeLayer(marker)
+    })
+
+
 }
       </script>
