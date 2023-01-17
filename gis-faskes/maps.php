@@ -239,10 +239,9 @@ const resetMarker = (event) => {
 
     if (waypoints) {
         map.removeControl(waypoints);
+        map.removeLayer(popupCurrentLoc);
+        map.removeLayer(popupFaskesLoc);
     }
-
-    map.removeLayer(popupCurrentLoc);
-    map.removeLayer(popupFaskesLoc);
 
     markers.forEach(marker => {
         map.removeLayer(marker)
